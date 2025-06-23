@@ -35,20 +35,26 @@ const AdminLayout = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
             className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
             onClick={() => setSidebarOpen(false)}
           />
         )}
       </AnimatePresence>
 
-      {/* Sidebar */}
+      {/* Sidebar with smooth animations */}
       <AnimatePresence>
-        {(sidebarOpen || window.innerWidth >= 1024) && (
+        {sidebarOpen && (
           <motion.div
-            initial={{ x: -320 }}
-            animate={{ x: 0 }}
-            exit={{ x: -320 }}
-            transition={{ type: "spring", damping: 25, stiffness: 200 }}
+            initial={{ x: -320, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: -320, opacity: 0 }}
+            transition={{ 
+              type: "spring", 
+              damping: 25, 
+              stiffness: 200,
+              opacity: { duration: 0.2 }
+            }}
             className="fixed lg:static inset-y-0 left-0 z-50 w-80 bg-white shadow-lg lg:shadow-none border-r border-gray-200"
           >
             <div className="flex h-full flex-col">
@@ -64,7 +70,7 @@ const AdminLayout = () => {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="lg:hidden"
+                  className="lg:hidden hover:bg-gray-100 transition-colors"
                   onClick={() => setSidebarOpen(false)}
                 >
                   <X className="h-5 w-5" />
@@ -72,31 +78,47 @@ const AdminLayout = () => {
               </div>
 
               {/* Navigation */}
-              <nav className="flex-1 px-4 py-6 space-y-2">
-                {navigation.map((item) => {
+              <motion.nav 
+                className="flex-1 px-4 py-6 space-y-2"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1, duration: 0.3 }}
+              >
+                {navigation.map((item, index) => {
                   const isActive = location.pathname === item.href || 
                     (item.href === '/admin' && location.pathname === '/admin');
                   
                   return (
-                    <Link
+                    <motion.div
                       key={item.name}
-                      to={item.href}
-                      onClick={() => setSidebarOpen(false)}
-                      className={`flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
-                        isActive
-                          ? 'bg-black text-white'
-                          : 'text-gray-700 hover:bg-gray-100'
-                      }`}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.1 + (index * 0.05), duration: 0.2 }}
                     >
-                      <item.icon className="h-5 w-5 mr-3" />
-                      {item.name}
-                    </Link>
+                      <Link
+                        to={item.href}
+                        onClick={() => setSidebarOpen(false)}
+                        className={`flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 hover:scale-105 ${
+                          isActive
+                            ? 'bg-black text-white shadow-md'
+                            : 'text-gray-700 hover:bg-gray-100 hover:shadow-sm'
+                        }`}
+                      >
+                        <item.icon className="h-5 w-5 mr-3" />
+                        {item.name}
+                      </Link>
+                    </motion.div>
                   );
                 })}
-              </nav>
+              </motion.nav>
 
               {/* User info and logout */}
-              <div className="border-t border-gray-200 p-4">
+              <motion.div 
+                className="border-t border-gray-200 p-4"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2, duration: 0.3 }}
+              >
                 <div className="flex items-center mb-4">
                   <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
                     <span className="text-sm font-medium text-gray-700">
@@ -112,12 +134,12 @@ const AdminLayout = () => {
                   variant="outline"
                   size="sm"
                   onClick={handleLogout}
-                  className="w-full flex items-center justify-center"
+                  className="w-full flex items-center justify-center hover:bg-gray-50 transition-colors"
                 >
                   <LogOut className="h-4 w-4 mr-2" />
                   Logout
                 </Button>
-              </div>
+              </motion.div>
             </div>
           </motion.div>
         )}
@@ -132,20 +154,35 @@ const AdminLayout = () => {
               variant="ghost"
               size="sm"
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="p-2 hover:bg-gray-100 rounded-md transition-colors"
+              className="p-2 hover:bg-gray-100 rounded-md transition-all duration-200 hover:scale-105"
             >
-              <Menu className="h-5 w-5" />
+              <motion.div
+                animate={{ rotate: sidebarOpen ? 180 : 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                <Menu className="h-5 w-5" />
+              </motion.div>
             </Button>
             
-            <h1 className="text-xl font-semibold text-gray-900 ml-4">
+            <motion.h1 
+              className="text-xl font-semibold text-gray-900 ml-4"
+              whileHover={{ scale: 1.02 }}
+              transition={{ duration: 0.2 }}
+            >
               Greecode Admin Portal
-            </h1>
+            </motion.h1>
           </div>
         </header>
 
         {/* Page content */}
         <main className="flex-1 p-6">
-          <Outlet />
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <Outlet />
+          </motion.div>
         </main>
       </div>
     </div>
