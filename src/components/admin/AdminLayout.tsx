@@ -127,17 +127,17 @@ const AdminLayout = () => {
       <div className="flex-1 flex flex-col">
         {/* Header */}
         <header className="bg-white shadow-sm border-b border-gray-200 h-16 flex items-center px-6">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="lg:hidden"
-          >
-            <Menu className="h-5 w-5" />
-          </Button>
-          
-          <div className="flex-1 lg:ml-0 ml-4">
-            <h1 className="text-xl font-semibold text-gray-900">
+          <div className="flex items-center">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="p-2 hover:bg-gray-100 rounded-md transition-colors"
+            >
+              <Menu className="h-5 w-5" />
+            </Button>
+            
+            <h1 className="text-xl font-semibold text-gray-900 ml-4">
               Greecode Admin Portal
             </h1>
           </div>
