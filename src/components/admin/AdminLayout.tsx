@@ -3,14 +3,18 @@ import { useState } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../contexts/AuthContext';
-import { Menu, X, TrendingUp, Users, Settings, Calendar, FileText, LogOut } from 'lucide-react';
+import { Menu, X, TrendingUp, Users, Settings, Calendar, FileText, LogOut, MessageSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 
 const AdminLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { user, logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
+
+  // Mock data for message count - in real app this would come from your backend
+  const messageCount = 5;
 
   const handleLogout = () => {
     logout();
@@ -171,6 +175,27 @@ const AdminLayout = () => {
             >
               Greecode Admin Portal
             </motion.h1>
+          </div>
+          
+          {/* Messages Icon with Badge */}
+          <div className="ml-auto">
+            <Link to="/admin/support" className="relative">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="p-2 hover:bg-gray-100 rounded-md transition-all duration-200 hover:scale-105"
+              >
+                <MessageSquare className="h-5 w-5 text-gray-600" />
+                {messageCount > 0 && (
+                  <Badge 
+                    variant="destructive" 
+                    className="absolute -top-1 -right-1 h-5 w-5 p-0 text-xs flex items-center justify-center rounded-full bg-red-500 text-white"
+                  >
+                    {messageCount}
+                  </Badge>
+                )}
+              </Button>
+            </Link>
           </div>
         </header>
 
