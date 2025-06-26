@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 interface User {
@@ -15,6 +14,8 @@ interface AuthContextType {
   verifyTwoFactor: (code: string) => Promise<boolean>;
   logout: () => void;
   loading: boolean;
+  showWelcomeGreeting: boolean;
+  setShowWelcomeGreeting: (show: boolean) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -30,6 +31,7 @@ export const useAuth = () => {
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showWelcomeGreeting, setShowWelcomeGreeting] = useState(false);
 
   useEffect(() => {
     // Check for existing auth token on mount
@@ -86,6 +88,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           setUser(updatedUser);
           localStorage.setItem('adminToken', 'mock-jwt-token');
           localStorage.setItem('adminUser', JSON.stringify(updatedUser));
+          setShowWelcomeGreeting(true);
         }
         return true;
       }
@@ -100,12 +103,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const logout = () => {
     setUser(null);
+    setShowWelcomeGreeting(false);
     localStorage.removeItem('adminToken');
     localStorage.removeItem('adminUser');
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, verifyTwoFactor, logout, loading }}>
+    <AuthContext.Provider value={{ 
+      user, 
+      login, 
+      verifyTwoFactor, 
+      logout, 
+      loading, 
+      showWelcomeGreeting, 
+      setShowWelcomeGreeting 
+    }}>
       {children}
     </AuthContext.Provider>
   );
