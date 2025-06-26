@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -65,9 +64,11 @@ const AdminLayout = () => {
               {/* Logo */}
               <div className="flex h-16 items-center justify-between px-6 border-b border-gray-200">
                 <div className="flex items-center">
-                  <div className="w-8 h-8 bg-black rounded-lg flex items-center justify-center text-white font-bold text-sm">
-                    G
-                  </div>
+                  <img
+                    src="/lovable-uploads/9be281c4-8e08-4889-aaed-259328e16ee4.png"
+                    alt="Greecode Logo"
+                    className="w-8 h-8 object-contain"
+                  />
                   <span className="ml-2 text-xl font-bold text-gray-900">Greecode</span>
                   <span className="ml-2 text-sm text-gray-500">Admin</span>
                 </div>

@@ -69,7 +69,7 @@ const Index = () => {
           >
             <div className="relative">
               <motion.img
-                src="/lovable-uploads/8c0145d5-1e96-4a15-aea4-5193d1d75a15.png"
+                src="/lovable-uploads/9be281c4-8e08-4889-aaed-259328e16ee4.png"
                 alt="Greecode Logo"
                 className="w-16 h-16 object-contain"
                 whileHover={{ 
