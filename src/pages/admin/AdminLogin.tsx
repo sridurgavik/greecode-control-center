@@ -75,9 +75,11 @@ const AdminLogin = () => {
         >
           {/* Logo and title */}
           <div className="text-center mb-8">
-            <div className="mx-auto w-12 h-12 bg-black rounded-lg flex items-center justify-center text-white font-bold text-lg mb-4">
-              G
-            </div>
+            <img
+              src="/lovable-uploads/9be281c4-8e08-4889-aaed-259328e16ee4.png"
+              alt="Greecode Logo"
+              className="mx-auto w-12 h-12 object-contain mb-4"
+            />
             <h1 className="text-2xl font-bold text-gray-900">Greecode Admin</h1>
             <p className="text-gray-600 mt-2">Sign in to your admin account</p>
           </div>
