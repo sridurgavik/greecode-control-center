@@ -137,7 +137,7 @@ const WelcomeGreeting = ({ show, onComplete, userEmail }: WelcomeGreetingProps) 
               className="text-gray-400 ml-4"
             >
               Loading your dashboard...
-            </p>
+            </motion.p>
           </motion.div>
         </div>
 
