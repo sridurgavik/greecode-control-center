@@ -335,29 +335,47 @@ const AdminSupport = () => {
                 </Card>
               </div>
 
-              {/* Chat Interface with Background */}
+              {/* Chat Interface with Professional Background */}
               <div className="md:col-span-2">
                 {selectedConcern ? (
                   <Card className="h-full flex flex-col relative overflow-hidden">
-                    {/* Professional Background Pattern */}
-                    <div className="absolute inset-0 opacity-5">
-                      <div className="absolute inset-0" style={{
-                        backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='0.1'%3E%3Cpath d='M30 30c0-6.627-5.373-12-12-12s-12 5.373-12 12 5.373 12 12 12 12-5.373 12-12zm12 0c0-6.627-5.373-12-12-12s-12 5.373-12 12 5.373 12 12 12 12-5.373 12-12z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-                        backgroundSize: '60px 60px'
-                      }} />
-                    </div>
+                    {/* Professional Gradient Background */}
+                    <div 
+                      className="absolute inset-0 opacity-10"
+                      style={{
+                        background: `linear-gradient(135deg, 
+                          rgba(59, 130, 246, 0.05) 0%, 
+                          rgba(147, 51, 234, 0.05) 25%, 
+                          rgba(236, 72, 153, 0.05) 50%, 
+                          rgba(245, 158, 11, 0.05) 75%, 
+                          rgba(34, 197, 94, 0.05) 100%),
+                          url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='m25 25 50 0 0 50-50 0z' fill='none' stroke='%23e5e7eb' stroke-width='0.5'/%3E%3Cpath d='m0 0 25 25m25 0 25 25m25 0 25 25' stroke='%23e5e7eb' stroke-width='0.3'/%3E%3C/svg%3E")`,
+                        backgroundSize: '100px 100px, 50px 50px'
+                      }}
+                    />
+
+                    {/* Subtle Dot Pattern Overlay */}
+                    <div 
+                      className="absolute inset-0 opacity-5"
+                      style={{
+                        backgroundImage: `radial-gradient(circle at 1px 1px, rgba(59, 130, 246, 0.3) 1px, transparent 0)`,
+                        backgroundSize: '20px 20px'
+                      }}
+                    />
 
                     {/* Chat Header */}
-                    <div className="p-4 border-b flex items-center justify-between bg-white/90 backdrop-blur-sm relative z-10">
+                    <div className="p-4 border-b flex items-center justify-between bg-white/80 backdrop-blur-sm relative z-10">
                       <div 
-                        className="flex items-center gap-3 cursor-pointer"
+                        className="flex items-center gap-3 cursor-pointer hover:bg-gray-50/50 rounded-lg p-2 -m-2 transition-colors"
                         onClick={() => setShowUserInfo(true)}
                       >
-                        <Avatar>
-                          <AvatarFallback>{selectedConcern.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                        <Avatar className="ring-2 ring-blue-100">
+                          <AvatarFallback className="bg-gradient-to-br from-blue-400 to-purple-500 text-white">
+                            {selectedConcern.name.split(' ').map(n => n[0]).join('')}
+                          </AvatarFallback>
                         </Avatar>
                         <div>
-                          <h3 className="font-semibold">{selectedConcern.name}</h3>
+                          <h3 className="font-semibold text-gray-900">{selectedConcern.name}</h3>
                           <p className="text-sm text-gray-600">{selectedConcern.subject}</p>
                         </div>
                       </div>
@@ -365,6 +383,7 @@ const AdminSupport = () => {
                         variant="destructive"
                         size="sm"
                         onClick={() => setShowCloseDialog(true)}
+                        className="shadow-sm"
                       >
                         <X className="h-4 w-4 mr-2" />
                         Close Case
@@ -379,17 +398,20 @@ const AdminSupport = () => {
                           className={`flex ${message.sender === 'admin' ? 'justify-end' : 'justify-start'}`}
                         >
                           <div
-                            className={`max-w-[70%] p-3 rounded-lg ${
+                            className={`max-w-[70%] p-3 rounded-lg shadow-sm ${
                               message.sender === 'admin'
-                                ? 'bg-blue-500 text-white'
-                                : 'bg-white text-gray-900 shadow-sm border'
+                                ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white'
+                                : 'bg-white text-gray-900 border border-gray-200'
                             }`}
                           >
-                            <p>{message.content}</p>
-                            <p className={`text-xs mt-1 ${
+                            <p className="text-sm leading-relaxed">{message.content}</p>
+                            <p className={`text-xs mt-2 ${
                               message.sender === 'admin' ? 'text-blue-100' : 'text-gray-500'
                             }`}>
-                              {new Date(message.timestamp).toLocaleTimeString()}
+                              {new Date(message.timestamp).toLocaleTimeString([], { 
+                                hour: '2-digit', 
+                                minute: '2-digit' 
+                              })}
                             </p>
                           </div>
                         </div>
@@ -397,24 +419,28 @@ const AdminSupport = () => {
                     </div>
 
                     {/* Message Input */}
-                    <div className="p-4 border-t bg-white/90 backdrop-blur-sm relative z-10">
-                      <div className="flex gap-2">
-                        <Input
-                          value={newMessage}
-                          onChange={(e) => setNewMessage(e.target.value)}
-                          placeholder="Type your message..."
-                          onKeyPress={(e) => {
-                            if (e.key === 'Enter' && !e.shiftKey) {
-                              e.preventDefault();
-                              sendMessage();
-                            }
-                          }}
-                          className="flex-1"
-                        />
+                    <div className="p-4 border-t bg-white/80 backdrop-blur-sm relative z-10">
+                      <div className="flex gap-3 items-end">
+                        <div className="flex-1">
+                          <Input
+                            value={newMessage}
+                            onChange={(e) => setNewMessage(e.target.value)}
+                            placeholder="Type your message..."
+                            onKeyPress={(e) => {
+                              if (e.key === 'Enter' && !e.shiftKey) {
+                                e.preventDefault();
+                                sendMessage();
+                              }
+                            }}
+                            className="rounded-full border-gray-300 focus:border-blue-500 focus:ring-blue-500 shadow-sm"
+                            multiline
+                          />
+                        </div>
                         <Button
                           onClick={sendMessage}
                           disabled={!newMessage.trim()}
                           size="sm"
+                          className="rounded-full h-10 w-10 p-0 bg-blue-500 hover:bg-blue-600 shadow-sm"
                         >
                           <Send className="h-4 w-4" />
                         </Button>
@@ -422,10 +448,13 @@ const AdminSupport = () => {
                     </div>
                   </Card>
                 ) : (
-                  <Card className="h-full flex items-center justify-center">
+                  <Card className="h-full flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
                     <div className="text-center">
-                      <MessageCircle className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                      <p className="text-gray-500">Select a conversation to start chatting</p>
+                      <div className="w-16 h-16 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <MessageCircle className="h-8 w-8 text-white" />
+                      </div>
+                      <p className="text-gray-600 font-medium">Select a conversation to start chatting</p>
+                      <p className="text-sm text-gray-500 mt-1">Choose from active conversations on the left</p>
                     </div>
                   </Card>
                 )}
