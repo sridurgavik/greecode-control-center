@@ -1,8 +1,9 @@
+
 import { useState } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../contexts/AuthContext';
-import { Menu, X, TrendingUp, Users, Settings, Calendar, FileText, LogOut, MessageSquare } from 'lucide-react';
+import { Menu, X, TrendingUp, Users, Settings, Calendar, FileText, LogOut, MessageSquare, Tag } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import WelcomeGreeting from './WelcomeGreeting';
@@ -31,6 +32,7 @@ const AdminLayout = () => {
     { name: 'Users', href: '/admin/users', icon: Users },
     { name: 'Passkeys', href: '/admin/passkeys', icon: Settings },
     { name: 'Interviews', href: '/admin/interviews', icon: Calendar },
+    { name: 'Coupons', href: '/admin/coupons', icon: Tag },
     { name: 'Support', href: '/admin/support', icon: FileText },
   ];
 
@@ -42,7 +44,7 @@ const AdminLayout = () => {
         userEmail={user?.email}
       />
       
-      <div className="min-h-screen bg-gray-50 flex w-full">
+      <div className="min-h-screen bg-gray-50 flex w-full relative">
         {/* Mobile sidebar backdrop */}
         <AnimatePresence>
           {sidebarOpen && (
@@ -57,7 +59,7 @@ const AdminLayout = () => {
           )}
         </AnimatePresence>
 
-        {/* Sidebar with smooth animations */}
+        {/* Overlay Sidebar - doesn't affect layout */}
         <AnimatePresence>
           {sidebarOpen && (
             <motion.div
@@ -70,7 +72,7 @@ const AdminLayout = () => {
                 stiffness: 200,
                 opacity: { duration: 0.2 }
               }}
-              className="fixed lg:static inset-y-0 left-0 z-50 w-80 bg-white shadow-lg lg:shadow-none border-r border-gray-200"
+              className="fixed inset-y-0 left-0 z-50 w-80 bg-white shadow-2xl border-r border-gray-200"
             >
               <div className="flex h-full flex-col">
                 {/* Logo */}
@@ -87,7 +89,7 @@ const AdminLayout = () => {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="lg:hidden hover:bg-gray-100 transition-colors"
+                    className="hover:bg-gray-100 transition-colors"
                     onClick={() => setSidebarOpen(false)}
                   >
                     <X className="h-5 w-5" />
@@ -96,7 +98,7 @@ const AdminLayout = () => {
 
                 {/* Navigation */}
                 <motion.nav 
-                  className="flex-1 px-4 py-6 space-y-2"
+                  className="flex-1 px-4 py-6 space-y-2 overflow-y-auto"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.1, duration: 0.3 }}
@@ -115,7 +117,7 @@ const AdminLayout = () => {
                         <Link
                           to={item.href}
                           onClick={() => setSidebarOpen(false)}
-                          className={`flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 hover:scale-105 ${
+                          className={`flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 hover:scale-105 ${
                             isActive
                               ? 'bg-black text-white shadow-md'
                               : 'text-gray-700 hover:bg-gray-100 hover:shadow-sm'
@@ -162,10 +164,10 @@ const AdminLayout = () => {
           )}
         </AnimatePresence>
 
-        {/* Main content */}
-        <div className="flex-1 flex flex-col">
+        {/* Main content - full width always */}
+        <div className="flex-1 flex flex-col w-full">
           {/* Header */}
-          <header className="bg-white shadow-sm border-b border-gray-200 h-16 flex items-center px-6">
+          <header className="bg-white shadow-sm border-b border-gray-200 h-16 flex items-center px-6 relative z-30">
             <div className="flex items-center">
               <Button
                 variant="ghost"
@@ -174,7 +176,7 @@ const AdminLayout = () => {
                 className="p-2 hover:bg-gray-100 rounded-md transition-all duration-200 hover:scale-105"
               >
                 <motion.div
-                  animate={{ rotate: sidebarOpen ? 180 : 0 }}
+                  animate={{ rotate: sidebarOpen ? 90 : 0 }}
                   transition={{ duration: 0.2 }}
                 >
                   <Menu className="h-5 w-5" />

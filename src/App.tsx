@@ -12,6 +12,7 @@ import AdminRevenue from "./pages/admin/AdminRevenue";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminPasskeys from "./pages/admin/AdminPasskeys";
 import AdminInterviews from "./pages/admin/AdminInterviews";
+import AdminCoupons from "./pages/admin/AdminCoupons";
 import AdminSupport from "./pages/admin/AdminSupport";
 import ProtectedRoute from "./components/admin/ProtectedRoute";
 import AdminLayout from "./components/admin/AdminLayout";
@@ -49,6 +50,7 @@ const App = () => (
               <Route path="users" element={<AdminUsers />} />
               <Route path="passkeys" element={<AdminPasskeys />} />
               <Route path="interviews" element={<AdminInterviews />} />
+              <Route path="coupons" element={<AdminCoupons />} />
               <Route path="support" element={<AdminSupport />} />
             </Route>
             
