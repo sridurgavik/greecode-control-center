@@ -422,7 +422,7 @@ const AdminSupport = () => {
                     <div className="p-4 border-t bg-white/80 backdrop-blur-sm relative z-10">
                       <div className="flex gap-3 items-end">
                         <div className="flex-1">
-                          <Input
+                          <Textarea
                             value={newMessage}
                             onChange={(e) => setNewMessage(e.target.value)}
                             placeholder="Type your message..."
@@ -432,8 +432,8 @@ const AdminSupport = () => {
                                 sendMessage();
                               }
                             }}
-                            className="rounded-full border-gray-300 focus:border-blue-500 focus:ring-blue-500 shadow-sm"
-                            multiline
+                            className="min-h-[40px] max-h-[120px] resize-none rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 shadow-sm"
+                            rows={1}
                           />
                         </div>
                         <Button
