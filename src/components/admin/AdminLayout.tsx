@@ -1,9 +1,8 @@
-
 import { useState } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../contexts/AuthContext';
-import { Menu, X, TrendingUp, Users, Settings, Calendar, FileText, LogOut, MessageSquare, Tag } from 'lucide-react';
+import { Menu, X, TrendingUp, Users, Settings, Calendar, FileText, LogOut, MessageSquare, Tag, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import WelcomeGreeting from './WelcomeGreeting';
@@ -33,6 +32,7 @@ const AdminLayout = () => {
     { name: 'Passkeys', href: '/admin/passkeys', icon: Settings },
     { name: 'Interviews', href: '/admin/interviews', icon: Calendar },
     { name: 'Coupons', href: '/admin/coupons', icon: Tag },
+    { name: 'Email', href: '/admin/email', icon: Mail },
     { name: 'Support', href: '/admin/support', icon: FileText },
   ];
 
