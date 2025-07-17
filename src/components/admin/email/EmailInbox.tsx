@@ -1,264 +1,245 @@
 
 import { useState } from 'react';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Separator } from '@/components/ui/separator';
 import { 
-  Mail, 
   Search, 
-  Star, 
   Archive, 
-  Trash2, 
+  Star, 
   Reply, 
-  Forward,
-  MoreHorizontal,
+  Forward, 
+  Trash2, 
+  MoreVertical,
   Paperclip,
-  Clock
+  Mail,
+  MailOpen,
+  ArrowLeft
 } from 'lucide-react';
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuTrigger 
-} from '@/components/ui/dropdown-menu';
+import { toast } from '@/hooks/use-toast';
 
-interface Email {
-  id: string;
-  sender: string;
-  senderEmail: string;
-  subject: string;
-  preview: string;
-  content: string;
-  timestamp: string;
-  isRead: boolean;
-  isStarred: boolean;
-  hasAttachment: boolean;
-  category: 'primary' | 'social' | 'promotions' | 'updates';
+interface EmailInboxProps {
+  onCompose: () => void;
 }
 
-const EmailInbox = () => {
+const EmailInbox = ({ onCompose }: EmailInboxProps) => {
+  const [selectedEmail, setSelectedEmail] = useState<number | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedEmail, setSelectedEmail] = useState<Email | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState<string>('primary');
 
-  // Mock email data
-  const mockEmails: Email[] = [
+  const mockEmails = [
     {
-      id: '1',
+      id: 1,
       sender: 'John Doe',
-      senderEmail: 'john@example.com',
-      subject: 'Project Update - Q4 2024',
-      preview: 'Here is the latest update on our Q4 project progress...',
-      content: 'Hello,\n\nI wanted to share the latest update on our Q4 project progress. We have successfully completed 80% of the milestones and are on track to finish by December 31st.\n\nBest regards,\nJohn',
-      timestamp: '2 hours ago',
+      email: 'john.doe@company.com',
+      avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100',
+      subject: 'Welcome to our platform!',
+      preview: 'Thank you for joining our platform. We are excited to have you on board and look forward to helping you achieve your goals.',
+      body: 'Dear User,\n\nThank you for joining our platform. We are excited to have you on board and look forward to helping you achieve your goals.\n\nIf you have any questions, please don\'t hesitate to reach out to our support team.\n\nBest regards,\nThe Team',
+      time: '10:30 AM',
       isRead: false,
       isStarred: true,
-      hasAttachment: true,
-      category: 'primary'
+      hasAttachment: false
     },
     {
-      id: '2',
-      sender: 'Sarah Wilson',
-      senderEmail: 'sarah@company.com',
-      subject: 'Meeting Reminder - Tomorrow 2PM',
-      preview: 'Just a friendly reminder about our meeting scheduled for tomorrow...',
-      content: 'Hi there,\n\nJust a friendly reminder about our meeting scheduled for tomorrow at 2PM. Please review the agenda I sent earlier.\n\nThanks,\nSarah',
-      timestamp: '5 hours ago',
+      id: 2,
+      sender: 'Marketing Team',
+      email: 'marketing@company.com',
+      avatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=100',
+      subject: 'Weekly Newsletter - New Features',
+      preview: 'Check out our latest features and updates in this weeks newsletter. We have some exciting announcements to share.',
+      body: 'Hello!\n\nCheck out our latest features and updates in this weeks newsletter. We have some exciting announcements to share including new integrations and improved performance.\n\nRead more in our blog post.\n\nBest,\nMarketing Team',
+      time: '9:15 AM',
       isRead: true,
       isStarred: false,
-      hasAttachment: false,
-      category: 'primary'
+      hasAttachment: true
     },
     {
-      id: '3',
-      sender: 'LinkedIn',
-      senderEmail: 'notifications@linkedin.com',
-      subject: 'You have 3 new connection requests',
-      preview: 'People you may know are waiting to connect with you...',
-      content: 'People you may know are waiting to connect with you on LinkedIn. Check out these connection requests.',
-      timestamp: '1 day ago',
-      isRead: true,
-      isStarred: false,
-      hasAttachment: false,
-      category: 'social'
-    },
-    {
-      id: '4',
-      sender: 'Amazon',
-      senderEmail: 'deals@amazon.com',
-      subject: 'Limited Time Offer - 50% Off Electronics',
-      preview: 'Dont miss out on our biggest electronics sale of the year...',
-      content: 'Dont miss out on our biggest electronics sale of the year. Shop now and save up to 50% on selected items.',
-      timestamp: '2 days ago',
+      id: 3,
+      sender: 'Support Team',
+      email: 'support@company.com',
+      avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100',
+      subject: 'Your ticket has been resolved',
+      preview: 'We are happy to inform you that your support ticket #12345 has been successfully resolved.',
+      body: 'Dear Customer,\n\nWe are happy to inform you that your support ticket #12345 has been successfully resolved. Our team has addressed your concerns and implemented the necessary fixes.\n\nIf you need any further assistance, please feel free to contact us.\n\nBest regards,\nSupport Team',
+      time: 'Yesterday',
       isRead: false,
       isStarred: false,
-      hasAttachment: false,
-      category: 'promotions'
+      hasAttachment: false
     }
   ];
 
-  const filteredEmails = mockEmails.filter(email => 
-    email.category === selectedCategory &&
-    (email.sender.toLowerCase().includes(searchTerm.toLowerCase()) ||
-     email.subject.toLowerCase().includes(searchTerm.toLowerCase()))
-  );
+  const filteredEmails = mockEmails.filter(email => {
+    return email.sender.toLowerCase().includes(searchTerm.toLowerCase()) ||
+           email.subject.toLowerCase().includes(searchTerm.toLowerCase());
+  });
 
-  const categories = [
-    { id: 'primary', name: 'Primary', count: mockEmails.filter(e => e.category === 'primary').length },
-    { id: 'social', name: 'Social', count: mockEmails.filter(e => e.category === 'social').length },
-    { id: 'promotions', name: 'Promotions', count: mockEmails.filter(e => e.category === 'promotions').length },
-    { id: 'updates', name: 'Updates', count: mockEmails.filter(e => e.category === 'updates').length }
-  ];
-
-  const handleEmailClick = (email: Email) => {
-    setSelectedEmail(email);
-    // Mark as read logic would go here
+  const handleEmailAction = (action: string, emailId: number) => {
+    switch (action) {
+      case 'star':
+        toast({
+          title: "Email Starred",
+          description: "Email has been added to starred items.",
+        });
+        break;
+      case 'archive':
+        toast({
+          title: "Email Archived",
+          description: "Email has been moved to archive.",
+        });
+        break;
+      case 'delete':
+        toast({
+          title: "Email Deleted",
+          description: "Email has been moved to trash.",
+        });
+        break;
+      case 'reply':
+        onCompose();
+        break;
+      case 'forward':
+        onCompose();
+        break;
+    }
   };
 
+  const selectedEmailData = selectedEmail ? mockEmails.find(e => e.id === selectedEmail) : null;
+
   return (
-    <div className="h-[600px] flex">
-      {/* Email List */}
-      <div className="w-1/2 border-r border-gray-200 flex flex-col">
-        {/* Search Bar */}
-        <div className="p-4 border-b border-gray-200">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-            <Input
-              placeholder="Search emails..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-            />
+    <div className="h-full flex flex-col">
+      {selectedEmail ? (
+        /* Email Detail View */
+        <div className="flex-1 flex flex-col">
+          {/* Email Header */}
+          <div className="flex items-center justify-between p-4 border-b bg-card">
+            <div className="flex items-center gap-4">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => setSelectedEmail(null)}
+                className="flex items-center gap-2"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Back
+              </Button>
+              <div className="flex items-center gap-3">
+                <Avatar className="h-10 w-10">
+                  <AvatarImage src={selectedEmailData?.avatar} />
+                  <AvatarFallback>{selectedEmailData?.sender.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                </Avatar>
+                <div>
+                  <div className="font-medium">{selectedEmailData?.sender}</div>
+                  <div className="text-sm text-muted-foreground">{selectedEmailData?.email}</div>
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button variant="outline" size="sm" onClick={() => handleEmailAction('star', selectedEmail)}>
+                <Star className="h-4 w-4" />
+              </Button>
+              <Button variant="outline" size="sm" onClick={() => handleEmailAction('archive', selectedEmail)}>
+                <Archive className="h-4 w-4" />
+              </Button>
+              <Button variant="outline" size="sm" onClick={() => handleEmailAction('delete', selectedEmail)}>
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
-        </div>
 
-        {/* Category tabs */}
-        <div className="flex border-b border-gray-200">
-          {categories.map((category) => (
-            <button
-              key={category.id}
-              onClick={() => setSelectedCategory(category.id)}
-              className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
-                selectedCategory === category.id
-                  ? 'border-b-2 border-blue-500 text-blue-600'
-                  : 'text-gray-600 hover:text-gray-800'
-              }`}
-            >
-              {category.name}
-              {category.count > 0 && (
-                <Badge variant="secondary" className="ml-2 text-xs">
-                  {category.count}
-                </Badge>
-              )}
-            </button>
-          ))}
-        </div>
-
-        {/* Email List */}
-        <div className="flex-1 overflow-y-auto">
-          {filteredEmails.map((email) => (
-            <div
-              key={email.id}
-              onClick={() => handleEmailClick(email)}
-              className={`p-4 border-b border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors ${
-                !email.isRead ? 'bg-blue-50' : ''
-              } ${selectedEmail?.id === email.id ? 'bg-blue-100' : ''}`}
-            >
-              <div className="flex items-start justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <div className={`w-2 h-2 rounded-full ${!email.isRead ? 'bg-blue-500' : 'bg-transparent'}`} />
-                  <span className={`font-medium ${!email.isRead ? 'text-gray-900' : 'text-gray-700'}`}>
-                    {email.sender}
-                  </span>
-                  {email.isStarred && <Star className="h-4 w-4 text-yellow-500 fill-current" />}
-                  {email.hasAttachment && <Paperclip className="h-4 w-4 text-gray-400" />}
-                </div>
-                <span className="text-xs text-gray-500">{email.timestamp}</span>
-              </div>
-              <div className={`text-sm mb-1 ${!email.isRead ? 'font-semibold' : 'font-normal'}`}>
-                {email.subject}
-              </div>
-              <div className="text-sm text-gray-600 truncate">
-                {email.preview}
-              </div>
+          {/* Email Content */}
+          <div className="flex-1 p-6 overflow-auto">
+            <div className="mb-4">
+              <h1 className="text-xl font-semibold mb-2">{selectedEmailData?.subject}</h1>
+              <div className="text-sm text-muted-foreground">{selectedEmailData?.time}</div>
             </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Email Content */}
-      <div className="w-1/2 flex flex-col">
-        {selectedEmail ? (
-          <>
-            {/* Email Header */}
-            <div className="p-4 border-b border-gray-200">
-              <div className="flex items-center justify-between mb-3">
-                <h2 className="text-lg font-semibold">{selectedEmail.subject}</h2>
-                <div className="flex items-center gap-2">
-                  <Button variant="ghost" size="sm">
-                    <Star className={`h-4 w-4 ${selectedEmail.isStarred ? 'text-yellow-500 fill-current' : 'text-gray-400'}`} />
-                  </Button>
-                  <Button variant="ghost" size="sm">
-                    <Archive className="h-4 w-4" />
-                  </Button>
-                  <Button variant="ghost" size="sm">
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="sm">
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent>
-                      <DropdownMenuItem>Mark as unread</DropdownMenuItem>
-                      <DropdownMenuItem>Move to folder</DropdownMenuItem>
-                      <DropdownMenuItem>Block sender</DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
-              </div>
-              
-              <div className="flex items-center gap-3 text-sm text-gray-600">
-                <span className="font-medium">{selectedEmail.sender}</span>
-                <span>&lt;{selectedEmail.senderEmail}&gt;</span>
-                <div className="flex items-center gap-1">
-                  <Clock className="h-3 w-3" />
-                  {selectedEmail.timestamp}
-                </div>
-              </div>
+            <Separator className="my-4" />
+            <div className="whitespace-pre-wrap text-foreground leading-relaxed">
+              {selectedEmailData?.body}
             </div>
+          </div>
 
-            {/* Email Content */}
-            <div className="flex-1 p-4 overflow-y-auto">
-              <div className="whitespace-pre-wrap text-gray-800">
-                {selectedEmail.content}
-              </div>
-            </div>
-
-            {/* Email Actions */}
-            <div className="p-4 border-t border-gray-200 flex gap-2">
-              <Button variant="outline" size="sm" className="flex items-center gap-2">
+          {/* Reply Actions */}
+          <div className="p-4 border-t bg-card">
+            <div className="flex gap-2">
+              <Button onClick={() => handleEmailAction('reply', selectedEmail)} className="flex items-center gap-2">
                 <Reply className="h-4 w-4" />
                 Reply
               </Button>
-              <Button variant="outline" size="sm" className="flex items-center gap-2">
+              <Button variant="outline" onClick={() => handleEmailAction('forward', selectedEmail)} className="flex items-center gap-2">
                 <Forward className="h-4 w-4" />
                 Forward
               </Button>
-            </div>
-          </>
-        ) : (
-          <div className="flex-1 flex items-center justify-center text-gray-500">
-            <div className="text-center">
-              <Mail className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-              <p className="text-lg font-medium">Select an email to read</p>
-              <p className="text-sm">Choose an email from the list to view its content</p>
+              <Button variant="outline" className="flex items-center gap-2">
+                <Paperclip className="h-4 w-4" />
+                Attach
+              </Button>
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      ) : (
+        /* Email List View */
+        <div className="flex-1 flex flex-col">
+          {/* Search Bar */}
+          <div className="p-4 border-b">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+              <Input
+                placeholder="Search mail"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+          </div>
+
+          {/* Email List */}
+          <div className="flex-1 overflow-auto">
+            {filteredEmails.map((email) => (
+              <div
+                key={email.id}
+                className={`flex items-center gap-4 p-4 border-b cursor-pointer hover:bg-accent/50 transition-colors ${
+                  !email.isRead ? 'bg-accent/20' : ''
+                }`}
+                onClick={() => setSelectedEmail(email.id)}
+              >
+                <div className="flex items-center gap-2">
+                  {email.isStarred && <Star className="h-4 w-4 text-yellow-500 fill-current" />}
+                  {email.hasAttachment && <Paperclip className="h-4 w-4 text-muted-foreground" />}
+                </div>
+                
+                <Avatar className="h-10 w-10 flex-shrink-0">
+                  <AvatarImage src={email.avatar} />
+                  <AvatarFallback>{email.sender.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                </Avatar>
+                
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between mb-1">
+                    <div className={`font-medium truncate ${!email.isRead ? 'text-foreground' : 'text-muted-foreground'}`}>
+                      {email.sender}
+                    </div>
+                    <div className="text-sm text-muted-foreground flex-shrink-0">
+                      {email.time}
+                    </div>
+                  </div>
+                  <div className="text-sm text-muted-foreground mb-1">
+                    {email.email}
+                  </div>
+                  <div className={`text-sm font-medium mb-1 ${!email.isRead ? 'text-foreground' : 'text-muted-foreground'}`}>
+                    {email.subject}
+                  </div>
+                  <div className="text-sm text-muted-foreground truncate">
+                    {email.preview}
+                  </div>
+                </div>
+                
+                {!email.isRead && (
+                  <div className="h-2 w-2 bg-primary rounded-full flex-shrink-0"></div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -1,55 +1,56 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Mail, Send, Inbox } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Mail, Plus, RefreshCw } from 'lucide-react';
 import EmailCompose from '../../components/admin/email/EmailCompose';
 import EmailInbox from '../../components/admin/email/EmailInbox';
 
 const AdminEmail = () => {
-  const [activeTab, setActiveTab] = useState('inbox');
+  const [currentView, setCurrentView] = useState<'inbox' | 'compose'>('inbox');
+
+  const handleRefresh = () => {
+    // Refresh emails functionality
+    window.location.reload();
+  };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
-      className="max-w-7xl mx-auto space-y-6"
-    >
-      <div className="flex items-center gap-3">
-        <Mail className="h-8 w-8 text-blue-600" />
-        <h1 className="text-3xl font-bold text-gray-900">Email Management</h1>
+    <div className="h-screen flex flex-col bg-background">
+      {/* Header */}
+      <div className="flex items-center justify-between p-4 border-b bg-card">
+        <div className="flex items-center gap-3">
+          <Mail className="h-6 w-6 text-primary" />
+          <h1 className="text-xl font-semibold">Gmail</h1>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleRefresh}
+            className="flex items-center gap-2"
+          >
+            <RefreshCw className="h-4 w-4" />
+            Refresh
+          </Button>
+          <Button
+            onClick={() => setCurrentView('compose')}
+            className="flex items-center gap-2"
+          >
+            <Plus className="h-4 w-4" />
+            Compose
+          </Button>
+        </div>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Email Center</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="inbox" className="flex items-center gap-2">
-                <Inbox className="h-4 w-4" />
-                Inbox
-              </TabsTrigger>
-              <TabsTrigger value="compose" className="flex items-center gap-2">
-                <Send className="h-4 w-4" />
-                Compose
-              </TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="inbox" className="mt-6">
-              <EmailInbox />
-            </TabsContent>
-            
-            <TabsContent value="compose" className="mt-6">
-              <EmailCompose />
-            </TabsContent>
-          </Tabs>
-        </CardContent>
-      </Card>
-    </motion.div>
+      {/* Main Content */}
+      <div className="flex-1 overflow-hidden">
+        {currentView === 'inbox' ? (
+          <EmailInbox onCompose={() => setCurrentView('compose')} />
+        ) : (
+          <EmailCompose onBack={() => setCurrentView('inbox')} />
+        )}
+      </div>
+    </div>
   );
 };
 
